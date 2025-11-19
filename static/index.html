@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pagos - E-Commerce</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>🛒 E-Commerce Sistema de Pagos</h1>
+                <div class="user-info">
+                    <span id="userName">Usuario: Invitado</span>
+                    <button id="btnCambiarUsuario" class="btn btn-secondary">Cambiar Usuario</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <div class="container">
+            <button class="tab-btn active" data-tab="productos">🏪 Tienda</button>
+            <button class="tab-btn" data-tab="carrito">🛒 Carrito (<span id="cartCount">0</span>)</button>
+            <button class="tab-btn" data-tab="pagos">💳 Pagos</button>
+            <button class="tab-btn" data-tab="facturas">📄 Facturas</button>
+            <button class="tab-btn" data-tab="admin">⚙️ Admin</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content container">
+        <!-- Tab: Productos -->
+        <section id="tab-productos" class="tab-content active">
+            <h2>Catálogo de Productos</h2>
+            <div class="filters">
+                <input type="text" id="searchProduct" placeholder="Buscar productos..." class="input-search">
+                <label for="categoryFilter">Categoría:</label>
+                <select id="categoryFilter" class="input-select">
+                    <option value="">Todas las categorías</option>
+                    <option value="Electrónica">Electrónica</option>
+                    <option value="Ropa">Ropa</option>
+                    <option value="Hogar">Hogar</option>
+                    <option value="Deportes">Deportes</option>
+                    <option value="Libros">Libros</option>
+                </select>
+            </div>
+            <div id="productGrid" class="product-grid"></div>
+        </section>
+
+        <!-- Tab: Carrito -->
+        <section id="tab-carrito" class="tab-content">
+            <h2>Carrito de Compras</h2>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Impuesto (12%):</span>
+                    <span id="cartTax">$0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+                <div class="cart-actions">
+                    <button id="btnVaciarCarrito" class="btn btn-danger">Vaciar Carrito</button>
+                    <button id="btnProcederPago" class="btn btn-primary">Proceder al Pago</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Pagos -->
+        <section id="tab-pagos" class="tab-content">
+            <h2>Gestión de Pagos</h2>
+            
+            <!-- Formulario de Pago -->
+            <div id="paymentForm" class="card" style="display: none;">
+                <h3>Realizar Pago</h3>
+                <form id="formPago">
+                    <div class="form-group">
+                        <label>Método de Pago:</label>
+                        <select id="metodoPago" class="input-select" required>
+                            <option value="tarjeta_credito">Tarjeta de Crédito</option>
+                            <option value="tarjeta_debito">Tarjeta de Débito</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="transferencia">Transferencia Bancaria</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Orden ID:</label>
+                        <input type="text" id="ordenId" class="input-text" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Monto Total:</label>
+                        <input type="text" id="montoTotal" class="input-text" readonly>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="btnCancelarPago" class="btn btn-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Lista de Pagos -->
+            <div class="card">
+                <h3>Historial de Pagos</h3>
+                <button id="btnRefreshPagos" class="btn btn-secondary mb-2">🔄 Actualizar</button>
+                <div id="pagosList" class="table-container"></div>
+            </div>
+        </section>
+
+        <!-- Tab: Facturas -->
+        <section id="tab-facturas" class="tab-content">
+            <h2>Facturas Generadas</h2>
+            <div class="card">
+                <button id="btnRefreshFacturas" class="btn btn-secondary mb-2">🔄 Actualizar</button>
+                <div id="facturasList" class="table-container"></div>
+            </div>
+        </section>
+
+        <!-- Tab: Admin -->
+        <section id="tab-admin" class="tab-content">
+            <h2>Panel de Administración</h2>
+            
+            <!-- Gestión de Productos -->
+            <div class="card">
+                <h3>Gestión de Productos</h3>
+                <form id="formProducto">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" id="prodNombre" class="input-text" placeholder="Nombre del producto" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría:</label>
+                            <select id="prodCategoria" class="input-select" title="Categoría del producto" required>
+                                <option value="Electrónica">Electrónica</option>
+                                <option value="Ropa">Ropa</option>
+                                <option value="Hogar">Hogar</option>
+                                <option value="Deportes">Deportes</option>
+                                <option value="Libros">Libros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Precio:</label>
+                            <input type="number" id="prodPrecio" class="input-text" step="0.01" min="0" placeholder="Precio del producto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prodStock">Stock:</label>
+                            <input type="number" id="prodStock" class="input-text" min="0" required title="Cantidad en stock" placeholder="Cantidad disponible">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea id="prodDescripcion" class="input-textarea" rows="3" title="Descripción del producto" placeholder="Descripción del producto"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Agregar Producto</button>
+                </form>
+            </div>
+
+            <!-- Lista de Productos Admin -->
+            <div class="card mt-3">
+                <h3>Productos en Inventario</h3>
+                <div id="adminProductList" class="table-container"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Usuario -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Seleccionar Usuario</h2>
+            <div id="usersList" class="users-list"></div>
+            <div class="mt-2">
+                <h3>Crear Nuevo Usuario</h3>
+                <form id="formNuevoUsuario">
+                    <div class="form-group">
+                        <input type="text" id="newUserName" class="input-text" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="newUserEmail" class="input-text" placeholder="Email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div id="modalConfirm" class="modal">
+        <div class="modal-content modal-small">
+            <h3 id="confirmTitle">Confirmación</h3>
+            <p id="confirmMessage"></p>
+            <div class="modal-actions">
+                <button id="btnConfirmCancel" class="btn btn-secondary">Cancelar</button>
+                <button id="btnConfirmOk" class="btn btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
